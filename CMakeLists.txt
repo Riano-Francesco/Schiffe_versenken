@@ -7,4 +7,8 @@ add_executable(Schiffe_versenken main.cpp
         Source/Gameboard.cpp
         Header/Gameboard.h
         Header/Spieler.h
-        Source/Spieler.cpp)
+        Source/Spieler.cpp
+        header/Schiffe.h
+        source/Schiffe.cpp
+        source/Logik.cpp
+        header/Logik.h)

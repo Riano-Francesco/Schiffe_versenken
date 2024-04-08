@@ -5,6 +5,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "Schiffe.h"
+
 using namespace std;
 
 class Spieler {
@@ -13,4 +16,6 @@ public:
     ~Spieler();
     string playerName;
 
+    void getShips();
+    Schiffe ship[10];
 };

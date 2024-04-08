@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <iomanip>
 
+
 using namespace std;
 
 class Gameboard {
@@ -17,14 +18,13 @@ public:
     Gameboard();
     ~Gameboard();
 
-    void begin();
     void board();
-    void shipini();
-
-
-    vector<Spieler> spieler;
 
     char feld[10][10];
+    void setships(Schiffe);
+
+
+    void display();
 };
 
 

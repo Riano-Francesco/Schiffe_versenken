@@ -1,6 +1,7 @@
-#include "header/Gameboard.h"
+#include "header/Logik.h"
 using namespace std;
 
 int main() {
-    Gameboard start;
+    Logik start;
+    start.begin();
 }
