@@ -15,19 +15,19 @@ void Gameboard::board() {
     char a = 'A';
     int b = 1;
 
-    cout << "  ";
+   // cout << "  ";
     for (int i = 0; i < 10; i++) {
-        cout << setw(3) << a++; // Buchstaben
+      // cout << setw(3) << a++; // Buchstaben
     }
-    cout << endl;
+   // cout << endl;
 
     for (int i = 0; i < 100; i++) {
         if (i % 10 == 0) {
-            cout << setw(2) << b++; // Zahlen
+           // cout << setw(2) << b++; // Zahlen
         }
-        cout << setw(3) << '-';
+       // cout << setw(3) << '-';
         if ((i + 1) % 10 == 0) {
-            cout << endl;
+           // cout << endl;
         }
         feld[i/10][i%10] = '-';
     }

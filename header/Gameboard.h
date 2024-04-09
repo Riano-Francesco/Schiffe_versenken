@@ -2,14 +2,8 @@
 // Created by R.Forni on 28.03.2024.
 //
 #pragma once
-#include "Spieler.h"
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <iomanip>
-
+#include "includes.h"
+#include "Schiffe.h"
 
 using namespace std;
 

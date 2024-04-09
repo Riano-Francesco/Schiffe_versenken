@@ -5,7 +5,7 @@
 #include "../Header/Spieler.h"
 
 Spieler::Spieler() {
-    cout << "Bitte Namen eingeben -> ";
+    cout << "\nName -> ";
     cin >> this->playerName;
     cout << endl;
 }
