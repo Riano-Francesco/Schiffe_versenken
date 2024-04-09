@@ -12,7 +12,8 @@ public:
     void begin();
 
     void setship(Spieler);
-    void attack(Spieler, Spieler);
-    bool versenkt(char, int);
+    bool attack(Spieler, Spieler);
+    bool versenkt(char, int, Spieler);
+    bool gameOver(Spieler);
 };
 
