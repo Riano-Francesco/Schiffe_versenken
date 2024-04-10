@@ -17,8 +17,8 @@ void Spieler::getShips() {
     int length[4] = { 5, 4, 3, 2};
     int count = 0;
 
-    for (int i = 0; i < 10; i++) {
-        if (i == 1 || i == 3 || i == 6) {
+    for (int i = 0; i < 1; i++) {
+        if (i == 1/* || i == 3 || i == 6*/) {
             count++;
         }
         ship[i].initship(ships[count], length[count]);

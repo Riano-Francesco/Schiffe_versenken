@@ -11,9 +11,9 @@ public:
 
     void begin();
 
-    void setship(Spieler);
-    bool attack(Spieler, Spieler);
+    void setship(Spieler*);
+    bool attack(Spieler*, Spieler*);
     bool versenkt(char, int, Spieler);
-    bool gameOver(Spieler);
+    bool gameOver(Spieler*);
 };
 

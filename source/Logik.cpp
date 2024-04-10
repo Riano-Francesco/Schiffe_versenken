@@ -33,78 +33,112 @@ void Logik::begin() {
     spieler1.getShips();
     spieler2.getShips();
 
-    setship(spieler1);
-    setship(spieler2);
+    setship(&spieler1);
+    setship(&spieler2);
 
     do {
         bool hit;
 
         do {
-            hit = attack(spieler1, spieler2);
+            hit = attack(&spieler1, &spieler2);
         } while (hit);
 
         do {
-            hit = attack(spieler2, spieler1);
+            hit = attack(&spieler2, &spieler1);
         } while (hit);
 
-        if (gameOver(spieler1)) {
+        if (gameOver(&spieler1)) {
             cout << spieler1.playerName << " hat verloren!" << endl;
-        } else if (gameOver(spieler2)) {
+        } else if (gameOver(&spieler2)) {
             cout << spieler2.playerName << " hat verloren!" << endl;
         }
 
-    } while (gameOver(spieler1) || gameOver(spieler2));
+    } while (gameOver(&spieler1) || gameOver(&spieler2));
 }
 
-void Logik::setship(Spieler spieler) {
+void Logik::setship(Spieler *spieler) {
     char set1;
     int set2 = 0;
 
     cout << "Bitte Schiff setzen" << endl;
-    for (int i = 0; i < 10; i++) {
-        cout << spieler.ship[i].name << endl;
-        cout << "Bitte Buchstabe von A - J" << endl;
-        cin >> set1;
-        cout << "Bitte Zahl von 1 - 10" << endl;
-        cin >> set2;
 
-        spieler.ship[i].start[1] = (int) toupper(set1) - 65;
-        spieler.ship[i].start[0] = set2 - 1;
-
-        cout << "Bitte Buchstabe von A - J" << endl;
-        cin >> set1;
-        cout << "Bitte Zahl von 1 - 10" << endl;
-        cin >> set2;
-
-        spieler.ship[i].ende[1] = (int) toupper(set1) - 65;
-        spieler.ship[i].ende[0] = set2 - 1;
-        spieler.boards[0].setships(spieler.ship[i]);
+    for (int i = 0; i < 1; i++) {
 
 
+        cout << spieler->ship[i].name << endl;
+        do {
+            cout << "Bitte Buchstabe von A - J" << endl;
+            cin >> set1;
+        } while (!(toupper(set1) < 'K' && isalpha(set1)));
+
+        do {
+            cout << "Bitte Zahl von 1 - 10" << endl;
+            cin >> set2;
+        } while (!(11 > set2 ));
+
+        spieler->ship[i].start[1] = (int) toupper(set1) - 65;
+        spieler->ship[i].start[0] = set2 - 1;
+
+        do {
+            cout << "Bitte Buchstabe von A - J" << endl;
+            cin >> set1;
+        } while (!(toupper(set1) < 'K' && isalpha(set1)));
+
+        do {
+            cout << "Bitte Zahl von 1 - 10" << endl;
+            cin >> set2;
+        } while (!(set2 < 11));
+
+        spieler->ship[i].ende[1] = (int) toupper(set1) - 65;
+        spieler->ship[i].ende[0] = set2 - 1;
+        spieler->boards[0].setships(spieler->ship[i]);
+        spieler->boards[0].display();
     }
 }
 
-bool Logik::attack(Spieler spielerA, Spieler spielerV) {
+bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
     char a;
     int b = 0;
-    cout << "Wohin soll geschossen werden?\n";
-    cout << "A - J -> ";
-    cin >> a;
-    cout << "1 - 10 -> ";
-    cin >> b;
-
     bool hit = false;
 
-    if (spielerV.boards[0].feld[a][b] == 'O')  {
-        spielerA.boards[1].feld[a][b] = 'X';
-        spielerV.boards[0].feld[a][b] = 'X';
-        cout << "Treffer! Nochmal schiessen!" << endl;
-        hit = true;
-        versenkt(a, b, spielerV);
-    } else {
-        spielerA.boards[1].feld[a][b] = '~';
-        cout << "Schuss ins blaue." << endl;
-    }
+    do {
+
+        cout << "Wohin soll geschossen werden?\n";
+        cout << "A - J -> ";
+        cin >> a;
+
+        if ((toupper(a)) > 'J') {
+            do {
+                cout << "Ungueltig - Bitte nochmal versuchen!";
+                cin >> a;
+            } while (!(toupper(a) < 'K'));
+        }
+
+        cout << "1 - 10 -> ";
+        cin >> b;
+
+        if (b > 10) {
+            do {
+                cout << "Ungueltig - Bitte nochmal versuchen!";
+                cin >> b;
+            } while (!(b < 11));
+        }
+        cout << "Feld: " << spielerV->boards[0].feld[(int) toupper(a) - 65][b] << " " << b << " " << ((int) toupper(a) - 65) << endl;
+        spielerV->boards[0].display();
+        if (spielerV->boards[0].feld[(int) toupper(a) - 65][b] == 'O') {
+            spielerA->boards[1].feld[(int) toupper(a) - 65][b] = 'X';
+            spielerV->boards[0].feld[(int) toupper(a) - 65][b] = 'X';
+            cout << "Treffer! Nochmal schiessen!" << endl;
+            hit = true;
+            versenkt(a, b, *spielerV);
+        } else if (spielerV->boards[0].feld[(int) toupper(a) - 65][b] == '-') {
+            spielerA->boards[1].feld[(int) toupper(a) - 65][b] = '~';
+            cout << "Schuss ins blaue." << endl;
+        } else {
+            cout << "Feld bereits beschossen - Bitte anderes Feld waehlen." << endl;
+        }
+    } while (!(spielerV->boards[0].feld[(int) toupper(a) - 65][b] == 'X' || spielerV->boards[0].feld[(int) toupper(a) - 65][b] == '~'));
+
     return hit;
 }
 
@@ -156,10 +190,10 @@ bool Logik::versenkt(char a, int b, Spieler spielerV) {
     }
 }
 
-bool Logik::gameOver(Spieler spieler) {
+bool Logik::gameOver(Spieler *spieler) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            if (spieler.boards[0].feld[i][j] == 'O') {
+            if (spieler->boards[0].feld[i][j] == 'O') {
                 return false;
             }
         }

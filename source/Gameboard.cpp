@@ -12,31 +12,9 @@ Gameboard::~Gameboard() {
 }
 
 void Gameboard::board() {
-    char a = 'A';
-    int b = 1;
-
-   // cout << "  ";
-    for (int i = 0; i < 10; i++) {
-      // cout << setw(3) << a++; // Buchstaben
-    }
-   // cout << endl;
-
     for (int i = 0; i < 100; i++) {
-        if (i % 10 == 0) {
-           // cout << setw(2) << b++; // Zahlen
-        }
-       // cout << setw(3) << '-';
-        if ((i + 1) % 10 == 0) {
-           // cout << endl;
-        }
         feld[i/10][i%10] = '-';
     }
-//    for (int i = 0; i < 10; i++) {
-//        for (int j = 0; j < 10; j++) {
-//            cout << setw(3) << feld[i][j];
-//        }
-//        cout << endl;
-//    }
 }
 
 void Gameboard::display() {
