@@ -3,7 +3,6 @@
 //
 
 #include "../header/Logik.h"
-#include <conio.h>
 
 void Logik::begin() {
     cout << "\nWillkommen bei Schiffe versenken!\n\n";
@@ -40,12 +39,16 @@ void Logik::begin() {
         bool hit;
 
         do {
+            cout << "Spieler " << spieler1.playerName << " ist dran." << endl;
             hit = attack(&spieler1, &spieler2);
-        } while (hit);
+
+
+        } while (!(hit || !gameOver(&spieler2)));
 
         do {
+            cout << "Spieler " << spieler2.playerName << " ist dran." << endl;
             hit = attack(&spieler2, &spieler1);
-        } while (hit);
+        } while (hit || gameOver(&spieler1));
 
         if (gameOver(&spieler1)) {
             cout << spieler1.playerName << " hat verloren!" << endl;
@@ -53,14 +56,14 @@ void Logik::begin() {
             cout << spieler2.playerName << " hat verloren!" << endl;
         }
 
-    } while (gameOver(&spieler1) || gameOver(&spieler2));
+    } while (!(gameOver(&spieler1) || gameOver(&spieler2)));
 }
 
 void Logik::setship(Spieler *spieler) {
     char set1;
     int set2 = 0;
 
-    cout << "Bitte Schiff setzen" << endl;
+    cout << spieler->playerName << ", bitte Schiff setzen" << endl;
 
     for (int i = 0; i < 1; i++) {
 
@@ -74,7 +77,7 @@ void Logik::setship(Spieler *spieler) {
         do {
             cout << "Bitte Zahl von 1 - 10" << endl;
             cin >> set2;
-        } while (!(11 > set2 ));
+        } while (!(11 > set2));
 
         spieler->ship[i].start[1] = (int) toupper(set1) - 65;
         spieler->ship[i].start[0] = set2 - 1;
@@ -116,6 +119,7 @@ bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
 
         cout << "1 - 10 -> ";
         cin >> b;
+        b = b - 1;
 
         if (b > 10) {
             do {
@@ -123,66 +127,87 @@ bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
                 cin >> b;
             } while (!(b < 11));
         }
-        cout << "Feld: " << spielerV->boards[0].feld[(int) toupper(a) - 65][b] << " " << b << " " << ((int) toupper(a) - 65) << endl;
-        spielerV->boards[0].display();
-        if (spielerV->boards[0].feld[(int) toupper(a) - 65][b] == 'O') {
-            spielerA->boards[1].feld[(int) toupper(a) - 65][b] = 'X';
-            spielerV->boards[0].feld[(int) toupper(a) - 65][b] = 'X';
-            cout << "Treffer! Nochmal schiessen!" << endl;
+        cout << "Feld: " << spielerV->boards[0].feld[b][(int) toupper(a) - 65] << " " << b << " " << ((int) toupper(a) - 65) << endl;
+
+        if (spielerV->boards[0].feld[b][(int) toupper(a) - 65] == 'O') {
+            spielerA->boards[1].feld[b][(int) toupper(a) - 65] = 'X';
+            spielerV->boards[0].feld[b][(int) toupper(a) - 65] = 'X';
+            spielerA->boards[1].display();
+            cout << "Treffer! " << spielerA->playerName << " darf nochmal schiessen!" << endl;
             hit = true;
             versenkt(a, b, *spielerV);
-        } else if (spielerV->boards[0].feld[(int) toupper(a) - 65][b] == '-') {
-            spielerA->boards[1].feld[(int) toupper(a) - 65][b] = '~';
+        } else if (spielerV->boards[0].feld[b][(int) toupper(a) - 65] == '-') {
+            spielerA->boards[1].feld[b][(int) toupper(a) - 65] = '~';
             cout << "Schuss ins blaue." << endl;
+            spielerV->boards[0].feld[b][(int) toupper(a) - 65] = '~';
+            hit = false;
         } else {
             cout << "Feld bereits beschossen - Bitte anderes Feld waehlen." << endl;
+            hit = true;
         }
-    } while (!(spielerV->boards[0].feld[(int) toupper(a) - 65][b] == 'X' || spielerV->boards[0].feld[(int) toupper(a) - 65][b] == '~'));
-
+    } while (hit);
+    spielerV->boards[0].display();
     return hit;
 }
 
 bool Logik::versenkt(char a, int b, Spieler spielerV) {
     int versenkt = 0;
     int count = 1;
+    a = (int) toupper(a) - 65;
 
     do {
-        if (spielerV.boards[0].feld[a + count][b] == 'X') {
+        if (spielerV.boards[0].feld[b][a + count] == 'X') {
             count++;
-        } else if (spielerV.boards[0].feld[a + count][b] == '-') {
-            versenkt += true;
+        } else if (spielerV.boards[0].feld[b][a + count] == '-' || (a + count) > 9) {
+            versenkt++;
         }
-    } while (spielerV.boards[0].feld[a + count][b] == '-' || spielerV.boards[0].feld[a + count][b] == 'O');
+    } while (!(spielerV.boards[0].feld[b][a + count] == '-' || spielerV.boards[0].feld[b][a + count] == 'O' || (a + count) > 9));
 
-    count = 1;
-    do {
-        if (spielerV.boards[0].feld[a][b + count] == 'X') {
-            count++;
-        } else if (spielerV.boards[0].feld[a][b + count] == '-') {
-            versenkt += true;
-        }
-    } while (spielerV.boards[0].feld[a][b + count] == '-' || spielerV.boards[0].feld[a][b + count] == 'O');
+    if (count > 1) {
+        versenkt++;
+    }
 
     count = 1;
     do {
-        if (spielerV.boards[0].feld[a - count][b] == 'X') {
+        if (spielerV.boards[0].feld[b + count][a] == 'X') {
             count++;
-        } else if (spielerV.boards[0].feld[a - count][b] == '-') {
-            versenkt += true;
+        } else if (spielerV.boards[0].feld[b + count][a] == '-' || (b + count) > 9) {
+            versenkt++;
         }
-    } while (spielerV.boards[0].feld[a - count][b] == '-' || spielerV.boards[0].feld[a - count][b] == 'O');
+    } while (!(spielerV.boards[0].feld[b + count][a] == '-' || spielerV.boards[0].feld[b + count][a] == 'O' || (b + count) > 9));
+
+    if (count > 1) {
+        versenkt++;
+    }
 
     count = 1;
     do {
-        if (spielerV.boards[0].feld[a][b - count] == 'X') {
+        if (spielerV.boards[0].feld[b][a - count] == 'X') {
             count++;
-        } else if (spielerV.boards[0].feld[a][b - count] == '-') {
-            versenkt += true;
+        } else if (spielerV.boards[0].feld[b][a - count] == '-' || (a - count) < 0) {
+            versenkt++;
         }
-    } while (spielerV.boards[0].feld[a][b - count] == '-' || spielerV.boards[0].feld[a][b - count] == 'O');
+    } while (!(spielerV.boards[0].feld[b][a - count] == '-' || spielerV.boards[0].feld[b][a - count] == 'O' || (a - count) < 0));
+
+    if (count > 1) {
+        versenkt++;
+    }
+
+    count = 1;
+    do {
+        if (spielerV.boards[0].feld[b - count][a] == 'X') {
+            count++;
+        } else if (spielerV.boards[0].feld[b - count][a] == '-' || (b - count) < 0) {
+            versenkt++;
+        }
+    } while (!(spielerV.boards[0].feld[b - count][a] == '-' || spielerV.boards[0].feld[b - count][a] == 'O' || (b - count) < 0));
+
+    if (count > 1) {
+        versenkt++;
+    }
 
     if (versenkt == 4) {
-        cout << "Schiff wurde versenkt!" << endl;
+        cout << spielerV.playerName << "s Schiff wurde versenkt!" << endl;
 
         return true;
     } else {

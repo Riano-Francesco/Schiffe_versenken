@@ -15,5 +15,6 @@ public:
     bool attack(Spieler*, Spieler*);
     bool versenkt(char, int, Spieler);
     bool gameOver(Spieler*);
+
 };
 
