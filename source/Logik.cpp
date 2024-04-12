@@ -36,19 +36,14 @@ void Logik::begin() {
     setship(&spieler2);
 
     do {
-        bool hit;
 
-        do {
-            cout << "Spieler " << spieler1.playerName << " ist dran." << endl;
-            hit = attack(&spieler1, &spieler2);
+        cout << "Spieler " << spieler1.playerName << " ist dran." << endl;
+        attack(&spieler1, &spieler2);
 
-
-        } while (!(hit || !gameOver(&spieler2)));
-
-        do {
+        if (!gameOver(&spieler2)) { // gameOver(&spieler2) == false
             cout << "Spieler " << spieler2.playerName << " ist dran." << endl;
-            hit = attack(&spieler2, &spieler1);
-        } while (hit || gameOver(&spieler1));
+            attack(&spieler2, &spieler1);
+        }
 
         if (gameOver(&spieler1)) {
             cout << spieler1.playerName << " hat verloren!" << endl;
@@ -145,7 +140,7 @@ bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
             cout << "Feld bereits beschossen - Bitte anderes Feld waehlen." << endl;
             hit = true;
         }
-    } while (hit);
+    } while (hit && !gameOver(spielerV));
     spielerV->boards[0].display();
     return hit;
 }
