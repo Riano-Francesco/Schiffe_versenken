@@ -60,37 +60,46 @@ void Logik::setship(Spieler *spieler) {
 
     cout << spieler->playerName << ", bitte Schiff setzen" << endl;
 
-    for (int i = 0; i < 1; i++) {
-
-
-        cout << spieler->ship[i].name << endl;
-        do {
-            cout << "Bitte Buchstabe von A - J" << endl;
-            cin >> set1;
-        } while (!(toupper(set1) < 'K' && isalpha(set1)));
+    for (int i = 0; i < 3; i++) {
 
         do {
-            cout << "Bitte Zahl von 1 - 10" << endl;
-            cin >> set2;
-        } while (!(11 > set2));
 
-        spieler->ship[i].start[1] = (int) toupper(set1) - 65;
-        spieler->ship[i].start[0] = set2 - 1;
+            cout << spieler->ship[i].name << endl;
+            do {
+                cout << "Bitte Buchstabe von A - J" << endl;
+                cin >> set1;
+            } while (!(toupper(set1) < 'K' && isalpha(set1)));
 
-        do {
-            cout << "Bitte Buchstabe von A - J" << endl;
-            cin >> set1;
-        } while (!(toupper(set1) < 'K' && isalpha(set1)));
+            do {
+                cout << "Bitte Zahl von 1 - 10" << endl;
+                cin >> set2;
+            } while (!(11 > set2));
 
-        do {
-            cout << "Bitte Zahl von 1 - 10" << endl;
-            cin >> set2;
-        } while (!(set2 < 11));
+            spieler->ship[i].start[1] = (int) toupper(set1) - 65;
+            spieler->ship[i].start[0] = set2 - 1;
 
-        spieler->ship[i].ende[1] = (int) toupper(set1) - 65;
-        spieler->ship[i].ende[0] = set2 - 1;
-        spieler->boards[0].setships(spieler->ship[i]);
-        spieler->boards[0].display();
+            do {
+                cout << "Bitte Buchstabe von A - J" << endl;
+                cin >> set1;
+            } while (!(toupper(set1) < 'K' && isalpha(set1)));
+
+            do {
+                cout << "Bitte Zahl von 1 - 10" << endl;
+                cin >> set2;
+            } while (!(set2 < 11));
+            cout << " pos: " << spieler->boards[0].feld[set1][set2] << endl;
+            if (spieler->boards[0].feld[set1][set2] == 'O') {
+                cout << "Platz bereits belegt - neue Position waehlen!" << endl;
+            }
+
+        } while (spieler->boards[0].feld[set1][set2] == 'O');
+
+            spieler->ship[i].ende[1] = (int) toupper(set1) - 65;
+            spieler->ship[i].ende[0] = set2 - 1;
+            spieler->boards[0].setships(spieler->ship[i]);
+            spieler->boards[0].display();
+
+
     }
 }
 
