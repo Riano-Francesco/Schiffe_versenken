@@ -16,5 +16,8 @@ public:
     bool versenkt(char, int, Spieler);
     bool gameOver(Spieler*);
     bool check(Spieler*, Schiffe);
+
+    void ki();
+    void kiSetship(Spieler*);
 };
 

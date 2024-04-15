@@ -32,8 +32,8 @@ void Logik::begin() {
     spieler1.getShips();
     spieler2.getShips();
 
-    setship(&spieler1);
-    setship(&spieler2);
+    kiSetship(&spieler1);
+    kiSetship(&spieler2);
 
     do {
 
@@ -255,4 +255,35 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
             }
         }
     return false;
+}
+
+void Logik::kiSetship(Spieler* ki) {
+
+    for (int i = 0; i < 3; i++) {
+        do {
+
+                int set1;
+                int set2;
+            do {
+                set1 = rand() % 10;
+                set2 = rand() % 10;
+            } while (!(ki->ship[i].length + set1 < 10 && ki->ship[i].length + set2 < 10));
+
+                ki->ship[i].start[1] = set1;
+                ki->ship[i].start[0] = set2;
+
+            int richtung = rand() % 2;
+            if (richtung == 0) {
+                ki->ship[i].ende[1] = set1;
+                ki->ship[i].ende[0] = set2 + ki->ship[i].length;
+            } else {
+                ki->ship[i].ende[1] = set1 + ki->ship[i].length;
+                ki->ship[i].ende[0] = set2;
+            }
+
+        } while (check(ki, ki->ship[i]));
+
+        ki->boards[0].setships(ki->ship[i]);
+        ki->boards[0].display();
+    }
 }
