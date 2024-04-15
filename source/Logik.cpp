@@ -16,7 +16,7 @@ void Logik::begin() {
     cout << "Eine Flotte besteht aus:                     \n";
     cout << "- 1x Schlachtschiff (5 Treffer zum Versenken)\n";
     cout << "- 2x Kreuzer (4 Treffer zum Versenken)       \n";
-    cout << "- 3x Zerstoerer (3 Treffer zum Versenken)     \n";
+    cout << "- 3x Zerstoerer (3 Treffer zum Versenken)    \n";
     cout << "- 4x U-Boote (2 Treffer zum Versenken)     \n\n";
 
     cout << "Bitte geben Sie 2 Spielernamen ein           \n";
@@ -87,18 +87,14 @@ void Logik::setship(Spieler *spieler) {
                 cout << "Bitte Zahl von 1 - 10" << endl;
                 cin >> set2;
             } while (!(set2 < 11));
-            cout << " pos: " << spieler->boards[0].feld[set1][set2] << endl;
-            if (spieler->boards[0].feld[set1][set2] == 'O') {
-                cout << "Platz bereits belegt - neue Position waehlen!" << endl;
-            }
-
-        } while (spieler->boards[0].feld[set1][set2] == 'O');
 
             spieler->ship[i].ende[1] = (int) toupper(set1) - 65;
             spieler->ship[i].ende[0] = set2 - 1;
+
+        } while (check(spieler, spieler->ship[i]));
+
             spieler->boards[0].setships(spieler->ship[i]);
             spieler->boards[0].display();
-
 
     }
 }
@@ -228,4 +224,35 @@ bool Logik::gameOver(Spieler *spieler) {
         }
     }
     return true;
+}
+
+bool Logik::check(Spieler *spieler, Schiffe ship) {
+
+    if (ship.start[0] > ship.ende[0]) {
+        int temp = ship.start[0];
+        ship.start[0] = ship.ende[0];
+        ship.ende[0] = temp;
+    }
+    if (ship.start[1] > ship.ende[1]) {
+        int temp = ship.start[1];
+        ship.start[1] = ship.ende[1];
+        ship.ende[1] = temp;
+    }
+        if (ship.start[0] != ship.ende[0]) {
+            for (ship.start[0]; ship.start[0] < ship.ende[0] + 1; ship.start[0]++) {
+                if (spieler->boards[0].feld[ship.start[1]][ship.start[0]] == 'O') {
+                    cout << "Platz bereits belegt - neue Position waehlen!" << endl;
+                    return true;
+                }
+            }
+        }
+        if (ship.start[1] != ship.ende[1]) {
+            for (ship.start[1]; ship.start[1] < ship.ende[1] + 1; ship.start[1]++) {
+                if (spieler->boards[0].feld[ship.start[0]][ship.start[1]] == 'O') {
+                    cout << "Platz bereits belegt - neue Position waehlen!" << endl;
+                    return true;
+                }
+            }
+        }
+    return false;
 }
