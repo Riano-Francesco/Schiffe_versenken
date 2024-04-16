@@ -13,9 +13,12 @@ public:
     Spieler();
     ~Spieler();
     string playerName;
+    bool KI;
+
 
     Gameboard boards[2];
 
     void getShips();
     Schiffe ship[10];
+
 };

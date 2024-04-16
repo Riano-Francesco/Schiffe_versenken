@@ -5,9 +5,19 @@
 #include "../Header/Spieler.h"
 
 Spieler::Spieler() {
-    cout << "\nName -> ";
-    cin >> this->playerName;
-    cout << endl;
+    bool auswahl = true;
+    cout << "Mensch | 0 | Computer | 1 | -> ";
+    cin >> auswahl;
+
+    if (auswahl) {
+        this->KI = true;
+        this->playerName = "KI";
+    } else {
+        cout << "Bitte geben Sie 2 Spielernamen ein\n";
+        cout << "\nName -> ";
+        cin >> this->playerName;
+        cout << endl;
+    }
 }
 Spieler::~Spieler(){
 }

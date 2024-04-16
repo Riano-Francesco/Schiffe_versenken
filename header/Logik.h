@@ -17,7 +17,7 @@ public:
     bool gameOver(Spieler*);
     bool check(Spieler*, Schiffe);
 
-    void ki();
+    bool kiAttack(Spieler*, Spieler*);
     void kiSetship(Spieler*);
 };
 
