@@ -42,41 +42,32 @@ void Logik::begin() {
         setship(&spieler2);
     }
 
-    do {
+        do {
 
-        if (spieler1.KI) {
-            kiAttack(&spieler2, &spieler1);
-        }
-        if (!gameOver(&spieler2)) { // gameOver(&spieler2) == false
-            cout << "Spieler " << spieler2.playerName << " ist dran." << endl;
-            kiAttack(&spieler2, &spieler1);
-        }
+            cout << "Spieler " << spieler1.playerName << " ist dran." << endl;
 
-        if (gameOver(&spieler1)) {
-            cout << spieler1.playerName << " hat verloren!" << endl;
-        } else if (gameOver(&spieler2)) {
-            cout << spieler2.playerName << " hat verloren!" << endl;
-        }
+            if (spieler1.KI) {
+                kiAttack(&spieler1, &spieler2);
+            } else {
+                attack(&spieler1, &spieler2);
+            }
 
-    } while (!(gameOver(&spieler1) || gameOver(&spieler2)));
+            if (!gameOver(&spieler2)) { // gameOver(&spieler2) == false
+                cout << "Spieler " << spieler2.playerName << " ist dran." << endl;
 
-    do {
+                if (spieler2.KI) {
+                    kiAttack(&spieler2, &spieler1);
+                } else {
+                    attack(&spieler2, &spieler1);
+                }
+            }
 
-        cout << "Spieler " << spieler1.playerName << " ist dran." << endl;
-        attack(&spieler1, &spieler2);
-
-        if (!gameOver(&spieler2)) { // gameOver(&spieler2) == false
-            cout << "Spieler " << spieler2.playerName << " ist dran." << endl;
-            attack(&spieler2, &spieler1);
-        }
-
-        if (gameOver(&spieler1)) {
-            cout << spieler1.playerName << " hat verloren!" << endl;
-        } else if (gameOver(&spieler2)) {
-            cout << spieler2.playerName << " hat verloren!" << endl;
-        }
-
-    } while (!(gameOver(&spieler1) || gameOver(&spieler2)));
+            if (gameOver(&spieler1)) {
+                cout << spieler1.playerName << " hat verloren!" << endl;
+            } else if (gameOver(&spieler2)) {
+                cout << spieler2.playerName << " hat verloren!" << endl;
+            }
+        } while (!(gameOver(&spieler1) || gameOver(&spieler2)));
 }
 
 void Logik::setship(Spieler *spieler) {
@@ -125,6 +116,7 @@ void Logik::setship(Spieler *spieler) {
 }
 
 bool Logik::check(Spieler *spieler, Schiffe ship) {
+    int count = 0;
 
     if (ship.start[0] > ship.ende[0]) {
         int temp = ship.start[0];
@@ -143,10 +135,7 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
                 (spieler->boards[0].feld[ship.start[0]][ship.start[1] + 1] == '-' || ship.start[1] + 1 > 9) &&
                 (spieler->boards[0].feld[ship.start[0] - 1][ship.start[1]] == '-' || ship.start[0] - 1 < 0) &&
                 (spieler->boards[0].feld[ship.start[0]][ship.start[1] - 1] == '-' || ship.start[1] - 1 < 0)) {
-                //cout << "Platz bereits belegt - neue Position waehlen!" << endl;
-                return false;
-            } else {
-                break;
+                count++;
             }
         }
     }
@@ -158,16 +147,16 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
                 (spieler->boards[0].feld[ship.start[0]][ship.start[1] + 1] == '-' || ship.start[1] + 1 > 9) &&
                 (spieler->boards[0].feld[ship.start[0] - 1][ship.start[1]] == '-' || ship.start[0] - 1 < 0) &&
                 (spieler->boards[0].feld[ship.start[0]][ship.start[1] - 1] == '-' || ship.start[1] - 1 < 0)) {
-                //cout << "Platz bereits belegt - neue Position waehlen!" << endl;
-                return false;
-            } else {
-                break;
+                count++;
             }
         }
-
     }
-    cout << "Platz bereits belegt - neue Position waehlen!" << endl;
-    return true;
+    if (count == ship.length) {
+        return false;
+    } else {
+        cout << "Platz bereits belegt - neue Position waehlen!" << endl;
+        return true;
+    }
 }
 
 bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
@@ -286,12 +275,12 @@ bool Logik::versenkt(char a, int b, Spieler spielerV) {
 }
 
 void Logik::kiSetship(Spieler* ki) {
+    int set1;
+    int set2;
+    int richtung;
 
     for (int i = 0; i < 3; i++) {
         do {
-
-            int set1;
-            int set2;
             do {
                 set1 = rand() % 10;
                 set2 = rand() % 10;
@@ -300,13 +289,13 @@ void Logik::kiSetship(Spieler* ki) {
             ki->ship[i].start[1] = set1;
             ki->ship[i].start[0] = set2;
 
-            int richtung = rand() % 2;
+            richtung = rand() % 2;
 
             if (richtung == 0) {
                 ki->ship[i].ende[1] = set1;
-                ki->ship[i].ende[0] = set2 + ki->ship[i].length;
+                ki->ship[i].ende[0] = set2 + ki->ship[i].length - 1;
             } else {
-                ki->ship[i].ende[1] = set1 + ki->ship[i].length;
+                ki->ship[i].ende[1] = set1 + ki->ship[i].length - 1;
                 ki->ship[i].ende[0] = set2;
             }
 
@@ -314,6 +303,15 @@ void Logik::kiSetship(Spieler* ki) {
 
         ki->boards[0].setships(ki->ship[i]);
         ki->boards[0].display();
+
+        if (richtung == 0) {
+            ki->ship[i].ende[1] = set1;
+            ki->ship[i].ende[0] = set2 + ki->ship[i].length + 1;
+        } else {
+            ki->ship[i].ende[1] = set1 + ki->ship[i].length + 1;
+            ki->ship[i].ende[0] = set2;
+        }
+
     }
 }
 
@@ -331,6 +329,8 @@ bool Logik::kiAttack(Spieler *kiA, Spieler *kiV) {
             kiV->boards[0].feld[b][a] = 'X';
             kiA->boards[1].display();
             cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
+            cout << "Feld: " << a << " " << b << endl;
+            system("pause");
             hit = true;
             versenkt((char)a + 65, b, *kiV);
         } else if (kiV->boards[0].feld[b][a] == '-') {
