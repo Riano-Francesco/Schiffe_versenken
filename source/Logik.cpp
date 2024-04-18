@@ -128,6 +128,7 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
         ship.start[1] = ship.ende[1];
         ship.ende[1] = temp;
     }
+
     if (ship.start[0] != ship.ende[0]) {
         for (ship.start[0]; ship.start[0] < ship.ende[0] + 1;  ship.start[0]++ ) {
             if (spieler->boards[0].feld[ship.start[0]][ship.start[1]] == '-' &&
@@ -139,7 +140,6 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
             }
         }
     }
-
     if (ship.start[1] != ship.ende[1]) {
         for (ship.start[1]; ship.start[1] < ship.ende[1] + 1; ship.start[1]++ ) {
             if (spieler->boards[0].feld[ship.start[0]][ship.start[1]] == '-' &&
@@ -151,10 +151,11 @@ bool Logik::check(Spieler *spieler, Schiffe ship) {
             }
         }
     }
+
     if (count == ship.length) {
         return false;
     } else {
-        cout << "Platz bereits belegt - neue Position waehlen!" << endl;
+        cout << "Ungueltige Auswahl - neue Position waehlen!" << endl;
         return true;
     }
 }
@@ -209,57 +210,55 @@ bool Logik::attack(Spieler *spielerA, Spieler *spielerV) {
     return hit;
 }
 
-bool Logik::versenkt(char a, int b, Spieler spielerV) {
+bool Logik::versenkt(char aa, int b, Spieler spielerV) {
     int versenkt = 0;
-    int count = 1;
-    a = (int) toupper(a) - 65;
-
+    int count = 0;
+    int a = (int) toupper(aa) - 65;
+    cout << "Feld: " << a << " " << b << endl;
     do {
+        count++;
         if (spielerV.boards[0].feld[b][a + count] == 'X') {
-            count++;
         } else if (spielerV.boards[0].feld[b][a + count] == '-' || (a + count) > 9) {
             versenkt++;
         }
-    } while (!(spielerV.boards[0].feld[b][a + count] == '-' || spielerV.boards[0].feld[b][a + count] == 'O' || (a + count) > 9));
+    } while (spielerV.boards[0].feld[b][a + count] == 'X');
 
     if (count > 1) {
         versenkt++;
     }
 
-    count = 1;
+    count = 0;
     do {
+        count++;
         if (spielerV.boards[0].feld[b + count][a] == 'X') {
-            count++;
         } else if (spielerV.boards[0].feld[b + count][a] == '-' || (b + count) > 9) {
             versenkt++;
         }
-    } while (!(spielerV.boards[0].feld[b + count][a] == '-' || spielerV.boards[0].feld[b + count][a] == 'O' || (b + count) > 9));
+    } while (spielerV.boards[0].feld[b + count][a] == 'X');
 
     if (count > 1) {
         versenkt++;
     }
-
-    count = 1;
+    count = 0;
     do {
+        count++;
         if (spielerV.boards[0].feld[b][a - count] == 'X') {
-            count++;
         } else if (spielerV.boards[0].feld[b][a - count] == '-' || (a - count) < 0) {
             versenkt++;
         }
-    } while (!(spielerV.boards[0].feld[b][a - count] == '-' || spielerV.boards[0].feld[b][a - count] == 'O' || (a - count) < 0));
+    } while (spielerV.boards[0].feld[b][a - count] == 'X');
 
     if (count > 1) {
         versenkt++;
     }
-
-    count = 1;
+    count = 0;
     do {
+        count++;
         if (spielerV.boards[0].feld[b - count][a] == 'X') {
-            count++;
         } else if (spielerV.boards[0].feld[b - count][a] == '-' || (b - count) < 0) {
             versenkt++;
         }
-    } while (!(spielerV.boards[0].feld[b - count][a] == '-' || spielerV.boards[0].feld[b - count][a] == 'O' || (b - count) < 0));
+    } while (spielerV.boards[0].feld[b - count][a] == 'X');
 
     if (count > 1) {
         versenkt++;
@@ -269,9 +268,8 @@ bool Logik::versenkt(char a, int b, Spieler spielerV) {
         cout << spielerV.playerName << "s Schiff wurde versenkt!" << endl;
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void Logik::kiSetship(Spieler* ki) {
@@ -318,21 +316,37 @@ void Logik::kiSetship(Spieler* ki) {
 bool Logik::kiAttack(Spieler *kiA, Spieler *kiV) {
     int a;
     int b;
+    char c;
     bool hit = false;
 
     do {
         a = rand() % 10;
         b = rand() % 10;
         cout << a << " " << b << endl;
+
         if (kiV->boards[0].feld[b][a] == 'O') {
             kiA->boards[1].feld[b][a] = 'X';
             kiV->boards[0].feld[b][a] = 'X';
             kiA->boards[1].display();
             cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
-            cout << "Feld: " << a << " " << b << endl;
-            system("pause");
+
+            int tempB = b;
+            int tempA = a;
+
             hit = true;
-            versenkt((char)a + 65, b, *kiV);
+            c = a + 65;  // konvertiert den int zu char
+            versenkt(c, b, *kiV);
+
+            while (versenkt(c, b, *kiV) == false) {
+                if (kiA->boards[0].feld[tempB][tempA] == 'X' &&
+                kiA->boards[0].feld[tempB + 1][tempA] == '-' &&
+                kiA->boards[0].feld[tempB][tempA + 1] == '-' &&
+                kiA->boards[0].feld[tempB - 1][tempA] == '-' &&
+                kiA->boards[0].feld[tempB][tempA - 1] == '-') {
+
+                }
+            }
+
         } else if (kiV->boards[0].feld[b][a] == '-') {
             kiA->boards[1].feld[b][a] = '~';
             cout << "Schuss ins blaue." << endl;
@@ -345,7 +359,7 @@ bool Logik::kiAttack(Spieler *kiA, Spieler *kiV) {
     } while (hit && !gameOver(kiV));
     kiV->boards[0].display();
     return hit;
-};
+}
 
 bool Logik::gameOver(Spieler *spieler) {
     for (int i = 0; i < 10; i++) {
