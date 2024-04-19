@@ -76,7 +76,7 @@ void Logik::setship(Spieler *spieler) {
 
     cout << spieler->playerName << ", bitte Schiff setzen" << endl;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
 
         do {
 
@@ -214,7 +214,7 @@ bool Logik::versenkt(char aa, int b, Spieler spielerV) {
     int versenkt = 0;
     int count = 0;
     int a = (int) toupper(aa) - 65;
-    cout << "Feld: " << a << " " << b << endl;
+
     do {
         count++;
         if (spielerV.boards[0].feld[b][a + count] == 'X') {
@@ -277,7 +277,7 @@ void Logik::kiSetship(Spieler* ki) {
     int set2;
     int richtung;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
         do {
             do {
                 set1 = rand() % 10;
@@ -322,7 +322,6 @@ bool Logik::kiAttack(Spieler *kiA, Spieler *kiV) {
     do {
         a = rand() % 10;
         b = rand() % 10;
-        cout << a << " " << b << endl;
 
         if (kiV->boards[0].feld[b][a] == 'O') {
             kiA->boards[1].feld[b][a] = 'X';
@@ -332,19 +331,47 @@ bool Logik::kiAttack(Spieler *kiA, Spieler *kiV) {
 
             int tempB = b;
             int tempA = a;
-
+            int unwichtig = 0;
             hit = true;
             c = a + 65;  // konvertiert den int zu char
             versenkt(c, b, *kiV);
 
-            while (versenkt(c, b, *kiV) == false) {
-                if (kiA->boards[0].feld[tempB][tempA] == 'X' &&
-                kiA->boards[0].feld[tempB + 1][tempA] == '-' &&
-                kiA->boards[0].feld[tempB][tempA + 1] == '-' &&
-                kiA->boards[0].feld[tempB - 1][tempA] == '-' &&
-                kiA->boards[0].feld[tempB][tempA - 1] == '-') {
+            while (versenkt(c, b, *kiV) == false && unwichtig == 0) {
 
+                if (kiA->boards[0].feld[tempB - 1][tempA] == '-') {
+
+                    if (kiV->boards[0].feld[tempB - 1][tempA] == 'O' || (unwichtig == 1 && kiV->boards[0].feld[tempB - 1][tempA] != 'X')) {
+                        kiA->boards[1].feld[tempB - 1][tempA] = 'X';
+                        kiV->boards[0].feld[tempB - 1][tempA] = 'X';
+                        kiA->boards[1].display();
+                        cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
+                    }
+                } else if (kiA->boards[0].feld[tempB][tempA + 1] == '-') {
+
+                    if (kiV->boards[0].feld[tempB][tempA + 1] == 'O' || (unwichtig == 1 && kiV->boards[0].feld[tempB][tempA + 1] != 'X')) {
+                        kiA->boards[1].feld[tempB][tempA + 1] = 'X';
+                        kiV->boards[0].feld[tempB][tempA + 1] = 'X';
+                        kiA->boards[1].display();
+                        cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
+                    }
+                } else if (kiA->boards[0].feld[tempB + 1][tempA] == '-') {
+
+                    if (kiV->boards[0].feld[tempB + 1][tempA] == 'O' || (unwichtig == 1 && kiV->boards[0].feld[tempB + 1][tempA] != 'X')) {
+                        kiA->boards[1].feld[tempB + 1][tempA] = 'X';
+                        kiV->boards[0].feld[tempB + 1][tempA] = 'X';
+                        kiA->boards[1].display();
+                        cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
+                    }
+                } else if (kiA->boards[0].feld[tempB][tempA - 1] == '-') {
+
+                    if (kiV->boards[0].feld[tempB][tempA - 1] == 'O' || (unwichtig == 1 && kiV->boards[0].feld[tempB][tempA - 1] != 'X')) {
+                        kiA->boards[1].feld[tempB][tempA - 1] = 'X';
+                        kiV->boards[0].feld[tempB][tempA - 1] = 'X';
+                        kiA->boards[1].display();
+                        cout << "Treffer! " << kiA->playerName << " darf nochmal schiessen!" << endl;
+                    }
                 }
+                unwichtig++;
             }
 
         } else if (kiV->boards[0].feld[b][a] == '-') {
